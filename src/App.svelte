@@ -1,17 +1,30 @@
 <script lang="ts">
 	import "./app.css"
 	import StatTable from "./lib/StatTable.svelte";
-	import {type Stat} from "./lib/Stat";
+	import {getStats, type StatDescription, type Statistic} from "./lib/Stat";
 	import {onMount} from "svelte";
+	import Search from "./lib/Search.svelte";
 
-	let stats: Stat[] = [];
+	const statDescriptions: StatDescription[] = [
+		{key: "blocks_mined", name: "Blocks Mined"},
+		{key: "deaths", name: "Deaths", asc: true},
+	]
 
-	onMount(async () => {
-		const response = await fetch("dummy_data.json");
-		stats = (await response.json())["blocks_mined"];
-	});
+	let stats: Statistic[] = $state([]);
+	let searchPlayer: string = $state("");
+	let searchStat: string = $state("");
+	let filteredStats = $derived(stats.filter(stat => stat.name.toLowerCase().includes(searchStat)))
+
+	onMount(async () => stats = await getStats(statDescriptions));
 </script>
 
 <h1>Player Statistics</h1>
 
-<StatTable name="Blocks Mined" {stats} />
+<div>
+	<Search name="Player" bind:value={searchPlayer} />
+	<Search name="Statistic" bind:value={searchStat} />
+</div>
+
+{#each filteredStats as stat}
+	<StatTable name={stat.name} stats={stat.entries} searchPlayer={searchPlayer}/>
+{/each}

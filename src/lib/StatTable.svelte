@@ -4,51 +4,35 @@
 	interface Props {
 		name: string;
 		stats: Stat[];
-		asc?: boolean;
+		searchPlayer: string;
 	}
 
-	function compareStats(a: Stat, b: Stat) {
-		let result = b.value - a.value;
-		if (result == 0) result = a.player.localeCompare(b.player);
-		else if (asc) result = -result;
-		return result;
-	}
-
-	let {name, stats, asc}: Props = $props();
-
-	let sortedStats = $derived(stats.sort(compareStats));
-	let place = 0;
-	let lastValue: number | undefined = undefined;
-
-	function getPlace(index: number, value: number) {
-		if (lastValue === value) return place;
-		lastValue = value;
-		place = index + 1;
-		return place;
-	}
+	let {name, stats, searchPlayer}: Props = $props();
+	let filteredStats = $derived(stats.filter(stat =>
+		stat.player.toLowerCase().includes(searchPlayer)
+	))
 </script>
 
 <table>
 	<thead>
 	<tr>
-		<th>Place</th>
+		<th class="centered">Place</th>
 		<th>Player</th>
-		<th>{name}</th>
+		<th class="centered">{name}</th>
 	</tr>
 	</thead>
 	<tbody>
-	{#each sortedStats as stat, i}
-	{const place = getPlace(i, stat.value)}
+	{#each filteredStats as stat}
 	<tr>
-		<td>
-			{#if place === 1}
+		<td class="centered">
+			{#if stat.place === 1}
 				<i class="nf nf-fa-crown"></i>
 			{:else}
-				{place}
+				{stat.place}.
 			{/if}
 		</td>
 		<td>{stat.player}</td>
-		<td>{stat.value}</td>
+		<td class="centered">{stat.value}</td>
 	</tr>
 	{/each}
 	</tbody>
@@ -61,7 +45,26 @@
 		-webkit-text-fill-color: transparent;
 	}
 
-	tr :first-child, :last-child {
+	.centered {
 		text-align: center;
+	}
+
+	table {
+		table-layout: fixed;
+		width: 400px;
+		text-align: left;
+		border-collapse: collapse;
+
+		tr {
+			height: 30px;
+		}
+
+		tbody tr:hover {
+			background-color: var(--highlight);
+		}
+
+		th, td {
+			padding: 2px 5px
+		}
 	}
 </style>
