@@ -10,7 +10,7 @@
 	let {name, stats, searchPlayer}: Props = $props();
 	let filteredStats = $derived(stats.filter(stat =>
 		stat.player.toLowerCase().includes(searchPlayer)
-	))
+	));
 </script>
 
 <table>
@@ -31,7 +31,7 @@
 				{stat.place}.
 			{/if}
 		</td>
-		<td>{stat.player}</td>
+		<td class="player">{stat.player}</td>
 		<td class="centered">{stat.value}</td>
 	</tr>
 	{/each}
@@ -49,9 +49,15 @@
 		text-align: center;
 	}
 
+	.player {
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+
 	table {
 		table-layout: fixed;
-		width: 400px;
+		width: 600px;
 		text-align: left;
 		border-collapse: collapse;
 

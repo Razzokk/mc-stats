@@ -1,5 +1,6 @@
 export interface Stat {
 	place: number;
+	uuid: string;
 	player: string;
 	value: number;
 }
@@ -16,7 +17,7 @@ export interface Statistic {
 }
 
 type RawEntry = {
-	player: string,
+	uuid: string,
 	stats: {
 		[key: string]: number
 	}
@@ -43,6 +44,7 @@ function calculatePlaces(rawStats: RawStat[], asc: boolean) {
 
 		return {
 			place: place,
+			uuid: rawStat.uuid,
 			player: rawStat.player,
 			value: rawStat.value
 		};
@@ -51,9 +53,16 @@ function calculatePlaces(rawStats: RawStat[], asc: boolean) {
 	return rawStats.toSorted(compareStats).map(calculatePlace)
 }
 
-export async function getStats(statDescriptions: StatDescription[]): Promise<Statistic[]> {
+type Stats = {
+	players: string[],
+	stats: Statistic[]
+}
+
+export async function getStats(statDescriptions: StatDescription[]): Promise<Stats> {
 	const response = await fetch("dummy_data.json");
 	const rawStats: RawEntry[] = await response.json();
+
+	const players = rawStats.map(rawStat => rawStat.uuid);
 	const stats: Statistic[] = [];
 
 	for (let statDescription of statDescriptions) {
@@ -61,8 +70,15 @@ export async function getStats(statDescriptions: StatDescription[]): Promise<Sta
 		const name = statDescription.name;
 		const asc = statDescription.asc ?? false;
 
+		// Check if stat exists in any of the players stat
+		if (!rawStats.some(rawStat => key in rawStat.stats)) {
+			console.error(`ERROR: Could not find statistic '${key}'`);
+			continue;
+		}
+
 		const entries: RawStat[] = rawStats.map(entry => ({
-			player: entry.player,
+			uuid: entry.uuid,
+			player: "Loading...", //TODO: maybe change
 			value: entry.stats[key] ?? 0
 		}));
 
@@ -72,5 +88,5 @@ export async function getStats(statDescriptions: StatDescription[]): Promise<Sta
 		});
 	}
 
-	return stats;
+	return {stats, players};
 }
