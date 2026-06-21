@@ -1,0 +1,20 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://www.nerdfonts.com/assets/css/webfont.css");
+
+* {
+	font-family: "Roboto", sans-serif
+}
+
+:root {
+	color-scheme: light dark;
+	--fg: #DDDDDD;
+	--bg: #181818;
+	--bg-bright: #202020;
+	--highlight: #404040;
+	--crown: linear-gradient(23deg,
+		rgba(255, 208, 0, 1) 0%,
+		rgba(255, 208, 0, 1) 25%,
+		rgba(255, 249, 217, 1) 85%,
+		rgba(255, 255, 250, 1) 100%
+	);
+}
