@@ -5,13 +5,14 @@
 	import {onMount} from "svelte";
 	import Search from "./lib/Search.svelte";
 	import {initMappings} from "./lib/global.svelte";
+	import {ticksToTime} from "./lib/utils";
 
 	const statDescriptions: StatDescription[] = [
 		{key: "mined", name: "Blocks Mined"},
 		{key: "deaths", name: "Deaths", asc: true},
 		{key: "crafted", name: "Items Crafted"},
 		{key: "killed", name: "Entities Killed"},
-		{key: "play_time", name: "Play Time"},
+		{key: "play_time", name: "Play Time", formatter: ticksToTime},
 		{key: "bell_ring", name: "Bells Ringed"},
 	]
 
@@ -35,5 +36,5 @@
 </div>
 
 {#each filteredStats as stat}
-	<StatTable name={stat.name} stats={stat.entries} searchPlayer={searchPlayer}/>
+	<StatTable name={stat.name} stats={stat.entries} searchPlayer={searchPlayer} formatter={stat.formatter}/>
 {/each}

@@ -8,11 +8,13 @@ export interface Stat {
 export interface StatDescription {
 	key: string,
 	name: string,
-	asc?: boolean
+	asc?: boolean,
+	formatter?: (value: number) => string
 }
 
 export interface Statistic {
 	name: string,
+	formatter?: (value: number) => string
 	entries: Stat[],
 }
 
@@ -67,7 +69,6 @@ export async function getStats(statDescriptions: StatDescription[]): Promise<Sta
 
 	for (let statDescription of statDescriptions) {
 		const key = statDescription.key;
-		const name = statDescription.name;
 		const asc = statDescription.asc ?? false;
 
 		// Check if stat exists in any of the players stat
@@ -83,8 +84,9 @@ export async function getStats(statDescriptions: StatDescription[]): Promise<Sta
 		}));
 
 		stats.push({
-			name: name,
-			entries: calculatePlaces(entries, asc)
+			name: statDescription.name,
+			entries: calculatePlaces(entries, asc),
+			formatter: statDescription.formatter
 		});
 	}
 

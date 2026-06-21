@@ -5,12 +5,18 @@
 		name: string;
 		stats: Stat[];
 		searchPlayer: string;
+		formatter?: (value: number) => string;
 	}
 
-	let {name, stats, searchPlayer}: Props = $props();
+	let {name, stats, searchPlayer, formatter}: Props = $props();
 	let filteredStats = $derived(stats.filter(stat =>
 		stat.player.toLowerCase().includes(searchPlayer)
 	));
+
+	function format(value: number) {
+		if (!formatter) return value;
+		return formatter(value);
+	}
 </script>
 
 <table>
@@ -32,7 +38,7 @@
 			{/if}
 		</td>
 		<td class="player">{stat.player}</td>
-		<td class="centered">{stat.value}</td>
+		<td class="centered">{format(stat.value)}</td>
 	</tr>
 	{/each}
 	</tbody>
