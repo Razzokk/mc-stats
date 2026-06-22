@@ -33,7 +33,8 @@ export function getOrCreateSkinViewer() {
 
 	if (!viewer) {
 		viewer = new SkinViewer({
-			width: 100,
+			width: 150,
+			height: 200,
 			animation: new IdleAnimation(),
 		});
 		viewer.autoRotate = true;

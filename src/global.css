@@ -1,0 +1,61 @@
+/* @formatter:off */
+
+:root {
+	color-scheme: light dark;
+
+	/* Colors */
+
+	--fg: #DDDDDD;
+
+	--bg: #181818;
+	--bg-bright: #202020;
+	--bg-red: #df6d6d;
+	--bg-red-highlight: #eb4f4f;
+	--bg-red-active: #bd3838;
+
+	--fg-yellow: #e8db7b;
+
+	--highlight: #404040;
+
+	--color-first: linear-gradient(
+		25deg,
+		rgba(255, 208, 0, 1) 0%,
+		rgba(255, 208, 0, 1) 25%,
+		rgba(255, 255, 250, 1) 100%
+	);
+
+	--color-second: linear-gradient(
+		25deg,
+		rgb(198 225 237) 0%,
+		rgb(198 225 237) 25%,
+		rgba(255, 255, 250, 1) 100%
+	);
+
+	--color-third: linear-gradient(
+		25deg,
+		rgb(182 120 54) 0%,
+		rgb(182 120 54) 25%,
+		rgba(255, 255, 250, 1) 100%
+	);
+
+	/* Spacing */
+
+	--space-xxs:	2px;
+	--space-xs:		4px;
+	--space-s:		8px;
+	--space-m:		12px;
+	--space-l:		16px;
+	--space-xl:		24px;
+
+	/* Border width */
+
+	--border-xs:	1px;
+	--border-s:		2px;
+	--border-m:		4px;
+	--border-l:		6px;
+	--border-xl:	8px;
+
+	/* Utilities */
+
+	--border: solid var(--bg-bright) var(--border-s);
+}

@@ -12,7 +12,7 @@
 
 	let {name, stats, searchPlayer, formatter}: Props = $props();
 	let filteredStats = $derived(stats.filter(stat =>
-		stat.player.toLowerCase().includes(searchPlayer)
+		stat.player.toLowerCase().includes(searchPlayer.toLowerCase())
 	));
 
 	function format(value: number) {
@@ -58,10 +58,10 @@
 	});
 </script>
 
-<div>
+<div class="container">
 	<h3>{name}</h3>
 
-	<div class="table-container" bind:this={container}>
+	<div class="table-container">
 		<!-- @formatter:off -->
 		<table>
 		<thead>
@@ -73,7 +73,7 @@
 		</thead>
 		<tbody>
 		{#each filteredStats as stat}
-		<tr class:error={!stat.player}>
+		<tr>
 		<td class="centered" data-place={stat.place}>
 			{#if stat.place <= 3}
 				<i class="nf nf-fa-trophy"></i>
@@ -89,10 +89,16 @@
 			{/if}</td>
 			<td class="centered">{format(stat.value)}</td>
 		</tr>
+		{:else}
+			<tr><td class="empty" colspan="3">
+				No Player found {#if searchPlayer}named '{searchPlayer}'{/if}
+			</td></tr>
 		{/each}
 		</tbody>
 		</table>
 		<!-- @formatter:on -->
+
+		<div class="viewer" bind:this={container}></div>
 	</div>
 </div>
 
@@ -116,8 +122,12 @@
 		--place-color: var(--color-third);
 	}
 
-	.centered {
-		text-align: center;
+	.container {
+		margin: var(--space-xl) 0;
+		border: var(--border);
+		border-radius: 5px;
+		max-width: 650px;
+		min-width: 300px;
 	}
 
 	.player {
@@ -126,30 +136,46 @@
 		text-overflow: ellipsis;
 	}
 
-	.error {
-		.player {
-			color: #f39d9d;
-		}
+	.viewer {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 100px;
+		max-width: 150px;
 	}
 
 	.table-container {
 		display: flex;
-		align-items: center;
 	}
 
 	h3 {
-		width: 100%;
+		margin: 0;
+		padding: var(--space-l) 0;
+		text-align: center;
+		border-bottom: var(--border);
+	}
+
+	.empty {
 		text-align: center;
 	}
 
 	table {
 		table-layout: fixed;
-		width: 600px;
 		text-align: left;
 		border-collapse: collapse;
+		border-right: var(--border);
+		width: 100%;
+
+		thead {
+			border-bottom: var(--border);
+		}
 
 		tr {
 			height: 30px;
+		}
+
+		tr:nth-child(even) {
+			background: var(--bg-bright);
 		}
 
 		tbody tr:hover {
@@ -157,7 +183,11 @@
 		}
 
 		th, td {
-			padding: 2px 5px
+			padding: var(--space-xxs) var(--space-xs);
+		}
+
+		th:first-child, td:first-child {
+			max-width: 100px;
 		}
 	}
 </style>

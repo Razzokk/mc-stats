@@ -5,30 +5,18 @@
 	font-family: "Roboto", sans-serif
 }
 
-:root {
-	color-scheme: light dark;
-	--fg: #DDDDDD;
-	--bg: #181818;
-	--bg-bright: #202020;
-	--highlight: #404040;
+#app {
+	max-width: 650px;
+	box-sizing: border-box;
+}
 
-	--color-first: linear-gradient(23deg,
-		rgba(255, 208, 0, 1) 0%,
-		rgba(255, 208, 0, 1) 25%,
-		rgba(255, 255, 250, 1) 100%
-	);
+html {
+	scrollbar-gutter: stable;
+}
 
-	--color-second: linear-gradient(23deg,
-		rgb(198 225 237) 0%,
-		rgb(198 225 237) 25%,
-		rgba(255, 255, 250, 1) 100%
-	);
-
-	--color-third: linear-gradient(23deg,
-		rgb(182 120 54) 0%,
-		rgb(182 120 54) 25%,
-		rgba(255, 255, 250, 1) 100%
-	);
+:focus-visible {
+	border-radius: 0;
+	outline: solid white;
 }
 
 body {
@@ -38,14 +26,8 @@ body {
 	align-items: center;
 	color: var(--fg);
 	background: var(--bg);
-	background-size: 200px;
 }
 
-h1 {
-	width: 100%;
+.centered {
 	text-align: center;
-	padding-block: 20px;
-	background: var(--bg-bright);
-	font-size: 30px;
-	margin: 0 0 50px 0;
 }

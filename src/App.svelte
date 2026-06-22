@@ -26,7 +26,7 @@
 	let stats: Statistic[] = $state([]);
 	let searchPlayer: string = $state("");
 	let searchStat: string = $state("");
-	let filteredStats = $derived(stats.filter(stat => stat.name.toLowerCase().includes(searchStat)))
+	let filteredStats = $derived(stats.filter(stat => stat.name.toLowerCase().includes(searchStat.toLowerCase())))
 
 	onMount(async () => {
 		const result = await getStats(statDescriptions);
@@ -37,11 +37,38 @@
 
 <h1>Player Statistics</h1>
 
-<div>
-	<Search name="Player" bind:value={searchPlayer} />
-	<Search name="Statistic" bind:value={searchStat} />
+<div class="search-bar">
+	<h2>Search Options</h2>
+	<div class="search-wrapper">
+		<Search name="Player" bind:value={searchPlayer} />
+		<Search name="Statistic" bind:value={searchStat} />
+	</div>
 </div>
 
 {#each filteredStats as stat}
 <StatTable name={stat.name} stats={stat.entries} searchPlayer={searchPlayer} formatter={stat.formatter}/>
 {/each}
+
+<style>
+	h1 {
+		text-align: center;
+		padding: 0.5em 0;
+	}
+
+	h2 {
+		text-align: center;
+		margin: 0.25em 0;
+	}
+
+	.search-bar {
+		width: 100%;
+		border: var(--border);
+	}
+
+	.search-wrapper {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: var(--space-s);
+		margin: var(--space-s) 0;
+	}
+</style>

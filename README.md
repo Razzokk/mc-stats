@@ -39,6 +39,7 @@ So if the frontend fetches `https://mc.razzokk.net/api/stats`, nginx redirects i
   - Easy state management with runes
 - SkinViewer creating webgl context errored and lagged => cache created instances
 - Don't load data multiple times, unnecessary data loads
+- Styling, it might seem simple, but it takes me **a lot of time**
 
 ## To-Do
 
@@ -49,3 +50,10 @@ So if the frontend fetches `https://mc.razzokk.net/api/stats`, nginx redirects i
 - [ ] Try using websockets to live update data
   - Could use to only stream current players online, day and weather status
 - [ ] Cache more stuff such as names and textures for faster loading
+
+## Credits
+
+- Framework: [Svelte](https://svelte.dev/)
+- SkinViewer: [skinview3d](https://github.com/bs-community/skinview3d)
+- Font: [Roboto](https://fonts.google.com/specimen/Roboto)
+- Icons: [Nerd Fonts](https://www.nerdfonts.com/)

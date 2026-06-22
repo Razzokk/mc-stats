@@ -1,27 +1,63 @@
 <script lang="ts">
-	import {onMount} from "svelte";
-
 	interface Props {
 		name: string,
 		value: string
 	}
 
 	let { name, value = $bindable() }: Props = $props();
-	let rawValue: string;
 
-	onMount(() => rawValue = value);
+	function reset() {
+		value = "";
+	}
 </script>
 
-<label>
-	{name}
-	<input
-		type="text"
-		placeholder="Search for {name}..."
-		bind:value={
-			() => rawValue,
-			(v) => {
-				rawValue = v;
-				value = v.toLowerCase()
-			}
-		}>
-</label>
+<div class="search-wrapper">
+	<label for="search">{name}:</label>
+	<span>
+		<input name="search" type="text" placeholder="Search for {name}..." bind:value>
+		<!-- svelte-ignore a11y_consider_explicit_label -->
+		<button onclick={reset}><i class="nf nf-cod-close"></i></button>
+	</span>
+</div>
+
+<style>
+	.search-wrapper {
+		display: flex;
+		justify-content: space-between;
+		font-size: large;
+		height: 30px;
+		background: var(--bg-bright);
+	}
+
+	span {
+		display: flex;
+	}
+
+	label {
+		display: flex;
+		align-items: center;
+		margin-left: var(--space-m);
+		max-width: 100px;
+	}
+
+	input {
+		font-size: medium;
+		border: none;
+		outline: none;
+	}
+
+	button {
+		background: var(--bg-red);
+		cursor: pointer;
+		border: none;
+		aspect-ratio: 1;
+
+		&:hover {
+			background: var(--bg-red-highlight);
+		}
+
+		&:active {
+			background: var(--bg-red-active);
+		}
+	}
+</style>
