@@ -1,5 +1,5 @@
 import {getPlayerProfile, type Profile} from "./minecraft-api";
-import type {Statistic} from "./Stat";
+import type {Statistic} from "./stats";
 import {IdleAnimation, SkinViewer} from "skinview3d";
 
 const uuidToPlayerMapping: { [uuid: string]: Profile } = $state({});
@@ -17,23 +17,20 @@ export async function initMappings(players: string[], stats: Statistic[]) {
 	}
 }
 
-export function playerName(uuid: string) {
-	return uuidToPlayerMapping[uuid]?.name ?? uuid;
+export function playerSkin(uuid: string) {
+	return uuidToPlayerMapping[uuid]?.textures.skin;
 }
 
-export function playerSkinUrl(uuid: string) {
-	return uuidToPlayerMapping[uuid]?.textures.skinUrl;
+export function playerCape(uuid: string) {
+	return uuidToPlayerMapping[uuid]?.textures.cape;
 }
 
-export function playerCapeUrl(uuid: string) {
-	return uuidToPlayerMapping[uuid]?.textures.capeUrl;
-}
-
-// Cache viewers because to performance issues
+// Cache viewers because of performance issues
 const availableViewers: SkinViewer[] = [];
 
 export function getOrCreateSkinViewer() {
 	let viewer = availableViewers.pop();
+
 	if (!viewer) {
 		viewer = new SkinViewer({
 			width: 100,

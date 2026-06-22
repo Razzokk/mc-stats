@@ -1,7 +1,7 @@
 <script lang="ts">
-	import {type Stat} from "./Stat";
-	import {getOrCreateSkinViewer, playerCapeUrl, playerSkinUrl, releaseSkinViewer} from "./global.svelte";
-	import {onDestroy, onMount} from "svelte";
+	import {type Stat} from "../lib/stats";
+	import {getOrCreateSkinViewer, playerCape, playerSkin, releaseSkinViewer} from "../lib/global.svelte.js";
+	import {onMount} from "svelte";
 
 	interface Props {
 		name: string;
@@ -20,39 +20,41 @@
 		return formatter(value);
 	}
 
-	let skinViewer = getOrCreateSkinViewer();
+	const skinViewer = getOrCreateSkinViewer();
 	let container: HTMLDivElement;
-
-	function setPlayerForViewer() {
-		const uuid = stats[currentFirstPlaceIndex].uuid;
-		const skinUrl = playerSkinUrl(uuid);
-		const capeUrl = playerCapeUrl(uuid);
-		if (skinUrl) skinViewer.loadSkin(skinUrl); else skinViewer.resetSkin();
-		if (capeUrl) skinViewer.loadCape(capeUrl); else skinViewer.resetCape();
-	}
+	let currentFirstPlaceIndex = $state(0);
+	const intervalMS = 2500; // 2.5 seconds
 
 	onMount(() => {
 		container.appendChild(skinViewer.canvas);
-		setPlayerForViewer();
+		return () => releaseSkinViewer(skinViewer);
 	});
 
-	let currentFirstPlaceIndex = 0;
-	let intervalId: number;
-	const interval = 2500; // 2.5 seconds
-
 	$effect(() => {
-		intervalId = setInterval(() => {
+		const player = stats[currentFirstPlaceIndex];
+		if (!player) return;
+
+		const skin = playerSkin(player.uuid);
+		const cape = playerCape(player.uuid);
+
+		if (skin) skinViewer.loadSkin(skin);
+		else skinViewer.resetSkin();
+
+		if (cape) skinViewer.loadCape(cape);
+		else skinViewer.resetCape();
+	});
+
+	// Cycle player skins if there are multiple 1st places
+	$effect(() => {
+		if (stats.length <= 1 || stats[0].value !== stats[1].value) return;
+
+		let intervalId = setInterval(() => {
 			currentFirstPlaceIndex++;
 			if (stats[currentFirstPlaceIndex].place != 1) {
 				currentFirstPlaceIndex = 0;
 			}
-			setPlayerForViewer();
-		}, interval);
-	});
-
-	onDestroy(() => {
-		releaseSkinViewer(skinViewer);
-		clearInterval(intervalId);
+		}, intervalMS);
+		return () => clearInterval(intervalId);
 	});
 </script>
 
@@ -71,15 +73,20 @@
 		</thead>
 		<tbody>
 		{#each filteredStats as stat}
-		<tr>
-		<td class="centered">
-			{#if stat.place === 1}
-				<i class="nf nf-fa-crown"></i>
+		<tr class:error={!stat.player}>
+		<td class="centered" data-place={stat.place}>
+			{#if stat.place <= 3}
+				<i class="nf nf-fa-trophy"></i>
 			{:else}
 				{stat.place}.
 			{/if}
 		</td>
-			<td class="player">{stat.player}</td>
+			<td class="player">
+			{#if !stat.player}
+				unknown
+			{:else}
+				{stat.player}
+			{/if}</td>
 			<td class="centered">{format(stat.value)}</td>
 		</tr>
 		{/each}
@@ -90,10 +97,23 @@
 </div>
 
 <style>
-	.nf-fa-crown {
-		background: var(--crown);
+	.nf-fa-trophy {
+		background: var(--place-color, var(--default));
 		background-clip: text;
+		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
+	}
+
+	[data-place="1"] .nf-fa-trophy {
+		--place-color: var(--color-first);
+	}
+
+	[data-place="2"] .nf-fa-trophy {
+		--place-color: var(--color-second);
+	}
+
+	[data-place="3"] .nf-fa-trophy {
+		--place-color: var(--color-third);
 	}
 
 	.centered {
@@ -104,6 +124,12 @@
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
+	}
+
+	.error {
+		.player {
+			color: #f39d9d;
+		}
 	}
 
 	.table-container {

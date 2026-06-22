@@ -8,6 +8,7 @@
 
 	let { name, value = $bindable() }: Props = $props();
 	let rawValue: string;
+
 	onMount(() => rawValue = value);
 </script>
 

@@ -5,7 +5,7 @@ export interface Stat {
 	value: number;
 }
 
-export interface StatDescription {
+export interface StatMetadata {
 	key: string,
 	name: string,
 	asc?: boolean,
@@ -20,9 +20,7 @@ export interface Statistic {
 
 type RawEntry = {
 	uuid: string,
-	stats: {
-		[key: string]: number
-	}
+	stats: Record<string, number>
 }
 
 type RawStat = Omit<Stat, "place">
@@ -60,18 +58,18 @@ type Stats = {
 	stats: Statistic[]
 }
 
-export async function getStats(statDescriptions: StatDescription[]): Promise<Stats> {
-	const response = await fetch("dummy_data.json");
+export async function getStats(statMetadata: StatMetadata[]): Promise<Stats> {
+	const response = await fetch("https://mc.razzokk.net/api/stats");
 	const rawStats: RawEntry[] = await response.json();
 
 	const players = rawStats.map(rawStat => rawStat.uuid);
 	const stats: Statistic[] = [];
 
-	for (let statDescription of statDescriptions) {
-		const key = statDescription.key;
-		const asc = statDescription.asc ?? false;
+	for (let meta of statMetadata) {
+		const key = meta.key;
+		const asc = meta.asc ?? false;
 
-		// Check if stat exists in any of the players stat
+		// Check if stat exists in any of the players stats
 		if (!rawStats.some(rawStat => key in rawStat.stats)) {
 			console.error(`ERROR: Could not find statistic '${key}'`);
 			continue;
@@ -84,9 +82,9 @@ export async function getStats(statDescriptions: StatDescription[]): Promise<Sta
 		}));
 
 		stats.push({
-			name: statDescription.name,
+			name: meta.name,
 			entries: calculatePlaces(entries, asc),
-			formatter: statDescription.formatter
+			formatter: meta.formatter
 		});
 	}
 

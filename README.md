@@ -1,0 +1,51 @@
+# MC Stats
+
+## How does it work?
+
+### Frontend
+
+The client specifies which stats it wants to have (stat metadata).
+Part of that is `key` and `name` (optionally `asc` if the order of the stats in the table shall be ascending) of the stat that we want to show.
+We only need to define an array of stat metadata and the frontend automatically tries to generate all the tables using these descriptions.
+
+We can also provide a custom formatter for stats.
+For example the play time stats is given in ticks (i.e. a 20th of a second).
+We want to show hours and minutes, with this option we can provide a custom formatter to accomplish this.
+
+The best player for each stat is shown on the right side of the table.
+If there is more than one player on the first place, the player view cycles between them every 2.5 seconds.
+
+### Backend and Server
+
+I also built a mod for a Minecraft Server that uses Fabric as a modloader and acts as a backend.
+This mod exposes an API endpoint that we can use to fetch stats data from the server.
+
+On the server I set up a nginx config that exposes the port of the Minecraft mod to the `/api/stats` path.
+So if the frontend fetches `https://mc.razzokk.net/api/stats`, nginx redirects it to `http://localhost:8081`.
+
+## Challenges
+
+- Data layout
+- Lazy loading
+- Reactivity
+- Showing results while other data is still loading (e.g. Minecraft profile)
+- Server (mod) backend (don't lag the server)
+- Efficient data transfer
+- Proper WebSocket handling
+- Getting familiar with a new framework ([Svelte](https://svelte.dev/))
+  - Re-usable components
+  - Compiles to HTML, CSS and JavaScript
+  - Very performant (better than React)
+  - Easy state management with runes
+- SkinViewer creating webgl context errored and lagged => cache created instances
+- Don't load data multiple times, unnecessary data loads
+
+## To-Do
+
+- [ ] World stats
+	- [ ] Time => display sun or moon
+	- [ ] Weather => display rain if raining
+- [ ] Setup CI and deploy to server when tag is used
+- [ ] Try using websockets to live update data
+  - Could use to only stream current players online, day and weather status
+- [ ] Cache more stuff such as names and textures for faster loading

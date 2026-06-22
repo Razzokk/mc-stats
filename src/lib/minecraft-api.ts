@@ -26,27 +26,46 @@ export type Profile = {
 	id: string,
 	name: string,
 	textures: {
-		skinUrl?: string,
-		capeUrl?: string,
+		skin?: ImageBitmap,
+		cape?: ImageBitmap,
 	}
+}
+
+async function fetchTexture(url?: string) {
+	if (!url) return undefined;
+	const response = await fetch(url);
+	const blob = await response.blob();
+	return await createImageBitmap(blob);
 }
 
 export async function getPlayerProfile(uuid: string): Promise<Profile> {
 	const response = await fetch(`sessionserver/session/minecraft/profile/${uuid}`);
-	const rawProfile = await response.json() as RawProfile;
 
-	const profile: Profile = {
-		id: rawProfile.id,
-		name: rawProfile.name,
+	try {
+		const rawProfile = await response.json() as RawProfile;
+
+		const profile: Profile = {
+			id: rawProfile.id,
+			name: rawProfile.name,
+			textures: {}
+		}
+
+		const texturesEncoded = rawProfile.properties.find(p => p.name === "textures")?.value;
+
+		if (texturesEncoded) {
+			const textures = texturesEncoded ? JSON.parse(atob(texturesEncoded)) as ProfileTextures : null;
+			profile.textures.skin = await fetchTexture(textures?.textures?.SKIN?.url);
+			profile.textures.cape = await fetchTexture(textures?.textures?.CAPE?.url);
+		}
+
+		return profile;
+	} catch (e) {
+		console.log(`Tried fetching for player '${uuid}' but failed.`);
+	}
+
+	return {
+		id: uuid,
+		name: "",
 		textures: {}
 	}
-
-	const texturesEncoded = rawProfile.properties.find(p => p.name === "textures")?.value;
-	if (texturesEncoded) {
-		const textures = texturesEncoded ? JSON.parse(atob(texturesEncoded)) as ProfileTextures : null;
-		if (textures?.textures?.SKIN?.url) profile.textures.skinUrl = textures?.textures?.SKIN?.url;
-		if (textures?.textures?.CAPE?.url) profile.textures.capeUrl = textures?.textures?.CAPE?.url;
-	}
-
-	return profile;
 }
