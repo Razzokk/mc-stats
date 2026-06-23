@@ -1,6 +1,13 @@
 # MC Stats
 
-Website available at: https://mc.razzokk.net/stats
+**Website available at**: https://mc.razzokk.net/stats
+
+## What is MC Stats?
+
+MC Stats is a very simple frontend that fetches a stats from a Minecraft server and displays them nicely.
+You can see various stats of all the players that have been on the server.
+The best ones are even highlighted with by showing off there player model.
+If you see too many players or too many stats, you have the option to search for specific ones.
 
 ## How does it work?
 
@@ -27,7 +34,9 @@ So if the frontend fetches `https://mc.razzokk.net/api/stats`, nginx redirects i
 
 ## Deployment
 
-There is an automated deployment to my server at https://mc.razzokk.net.
+There is an automated deployment to my server at https://mc.razzokk.net using GitHub actions.
+For each push to the repository, the code will be built.
+If in addition there is a tag that start with `v` the built frontend will also automatically be deployed.
 
 ## Challenges
 

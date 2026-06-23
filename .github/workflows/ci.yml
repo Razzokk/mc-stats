@@ -21,8 +21,6 @@ jobs:
           version: 11
           cache: true
 
-      - run: rsync
-
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
@@ -50,7 +48,11 @@ jobs:
           name: frontend
           path: dist
 
+      - name: Configure SSH
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_ed25519
+          echo "${{ secrets.SSH_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+#          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
       - name: Copy files to server (print for now)
-        run: ls dist/
-
-      - run: rsync
+        run: rsync -avz dist/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/mc.razzokk.net/stats/html
