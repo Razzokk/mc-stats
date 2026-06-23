@@ -24,9 +24,14 @@
 	.search-wrapper {
 		display: flex;
 		justify-content: space-between;
-		font-size: large;
-		height: 30px;
+		font-size: larger;
+		height: 40px;
 		background: var(--bg-bright);
+	}
+
+	.nf {
+		font-size: 16px;
+		font-weight: bold;
 	}
 
 	span {

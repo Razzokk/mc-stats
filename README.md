@@ -1,5 +1,7 @@
 # MC Stats
 
+Website available at: https://mc.razzokk.net/stats
+
 ## How does it work?
 
 ### Frontend
@@ -23,6 +25,10 @@ This mod exposes an API endpoint that we can use to fetch stats data from the se
 On the server I set up a nginx config that exposes the port of the Minecraft mod to the `/api/stats` path.
 So if the frontend fetches `https://mc.razzokk.net/api/stats`, nginx redirects it to `http://localhost:8081`.
 
+## Deployment
+
+There is an automated deployment to my server at https://mc.razzokk.net.
+
 ## Challenges
 
 - Data layout
@@ -40,6 +46,9 @@ So if the frontend fetches `https://mc.razzokk.net/api/stats`, nginx redirects i
 - SkinViewer creating webgl context errored and lagged => cache created instances
 - Don't load data multiple times, unnecessary data loads
 - Styling, it might seem simple, but it takes me **a lot of time**
+- Setup nginx configuration
+- Stupid hack to get around the fact that Mojang has CORS, and we cannot fetch player data (CORS error)
+  - => The mod also has a second endpoint that simply re-routes to Mojang and then hands it back to us with CORS allowed
 
 ## To-Do
 
@@ -49,7 +58,7 @@ So if the frontend fetches `https://mc.razzokk.net/api/stats`, nginx redirects i
 - [ ] Setup CI and deploy to server when tag is used
 - [ ] Try using websockets to live update data
   - Could use to only stream current players online, day and weather status
-- [ ] Cache more stuff such as names and textures for faster loading
+- [x] Cache more stuff such as names and textures for faster loading
 
 ## Credits
 

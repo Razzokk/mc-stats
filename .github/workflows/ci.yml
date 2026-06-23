@@ -1,0 +1,56 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11
+          cache: true
+
+      - run: rsync
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: frontend
+          path: dist/
+
+  deploy:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: frontend
+          path: dist
+
+      - name: Copy files to server (print for now)
+        run: ls dist/
+
+      - run: rsync

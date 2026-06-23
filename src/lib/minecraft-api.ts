@@ -38,11 +38,25 @@ async function fetchTexture(url?: string) {
 	return await createImageBitmap(blob);
 }
 
-export async function getPlayerProfile(uuid: string): Promise<Profile> {
-	const response = await fetch(`sessionserver/session/minecraft/profile/${uuid}`);
+// Hacky workaround for CORS cache as much as possible
+// Use stats mod to return player profile json with cors allowed
+async function getRawProfileCached(uuid: string) {
+	// See if it was already cached
+	const cached = localStorage.getItem(uuid);
+	if (cached) return JSON.parse(cached);
 
+	// Cache fetched data
+	const data = await fetch(`https://mc.razzokk.net/api/player?uuid=${uuid}`)
+		.then(response => response.json());
+	if (!data) return undefined;
+	localStorage.setItem(uuid, JSON.stringify(data));
+
+	return data;
+}
+
+export async function getPlayerProfile(uuid: string): Promise<Profile> {
 	try {
-		const rawProfile = await response.json() as RawProfile;
+		const rawProfile = await getRawProfileCached(uuid) as RawProfile;
 
 		const profile: Profile = {
 			id: rawProfile.id,

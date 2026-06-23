@@ -8,6 +8,7 @@
 #app {
 	max-width: 650px;
 	box-sizing: border-box;
+	width: 100%;
 }
 
 html {
